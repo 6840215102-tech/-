@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GroupMate — Work Together, Achieve More</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- AUTH -->
+<section id="authPage" class="auth-page">
+  <div class="auth-card">
+    <div class="brand-icon">👥</div>
+    <h1>GroupMate</h1>
+    <p>Work Together, Achieve More</p>
+
+    <div class="auth-tabs">
+      <button id="loginTab" class="auth-tab active" onclick="switchAuth('login')">เข้าสู่ระบบ</button>
+      <button id="registerTab" class="auth-tab" onclick="switchAuth('register')">สมัครสมาชิก</button>
+    </div>
+
+    <form id="loginForm">
+      <label>อีเมล</label>
+      <div class="field"><span>✉</span><input id="loginEmail" type="email" autocomplete="email" required placeholder="example@email.com"></div>
+      <label>รหัสผ่าน</label>
+      <div class="field"><span>🔒</span><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="รหัสผ่าน"></div>
+      <button class="primary wide" type="submit">เข้าสู่ระบบ</button>
+      <button type="button" class="link-button" onclick="showReset()">ลืมรหัสผ่าน?</button>
+    </form>
+
+    <form id="registerForm" class="hidden">
+      <label>ชื่อที่แสดง</label>
+      <div class="field"><span>👤</span><input id="regName" required maxlength="40" placeholder="เช่น นักริชา"></div>
+      <label>อีเมล</label>
+      <div class="field"><span>✉</span><input id="regEmail" type="email" required placeholder="example@email.com"></div>
+      <label>รหัสผ่าน</label>
+      <div class="field"><span>🔒</span><input id="regPassword" type="password" minlength="6" required placeholder="อย่างน้อย 6 ตัวอักษร"></div>
+      <label>ยืนยันรหัสผ่าน</label>
+      <div class="field"><span>🔒</span><input id="regPassword2" type="password" minlength="6" required placeholder="กรอกรหัสผ่านอีกครั้ง"></div>
+      <button class="primary wide" type="submit">สร้างบัญชี</button>
+    </form>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="appPage" class="app hidden">
+  <aside class="sidebar">
+    <div class="side-brand"><span>👥</span><b>GroupMate</b></div>
+    <nav>
+      <button class="nav active" data-page="dashboard" onclick="navigate('dashboard')">⌂ <span>หน้าหลัก</span></button>
+      <button class="nav" data-page="groups" onclick="navigate('groups')">♧ <span>กลุ่มของฉัน</span></button>
+      <button class="nav" data-page="tasks" onclick="navigate('tasks')">▣ <span>งานของฉัน</span></button>
+      <button class="nav" data-page="notifications" onclick="navigate('notifications')">🔔 <span>การแจ้งเตือน</span><i id="notifBadge"></i></button>
+      <button class="nav" data-page="profile" onclick="navigate('profile')">♙ <span>โปรไฟล์</span></button>
+    </nav>
+    <button class="logout" onclick="logout()">ออกจากระบบ</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="mobile-title">GroupMate</div>
+      <div class="top-actions">
+        <button class="icon" onclick="navigate('notifications')">🔔<span id="topBadge"></span></button>
+        <button class="avatar" onclick="navigate('profile')" id="topAvatar">👤</button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="screen">
+      <div class="welcome"><h2>สวัสดี, <span id="welcomeName">นักริชา</span> 👋</h2><p>มาทำงานกลุ่มกันเถอะ!</p></div>
+      <div class="section-head"><h3>กลุ่มของฉัน</h3><button onclick="navigate('groups')">ดูทั้งหมด</button></div>
+      <div id="dashboardGroups" class="cards"></div>
+
+      <div class="section-head"><h3>งานใกล้ถึงกำหนด</h3><button onclick="navigate('tasks')">ดูทั้งหมด</button></div>
+      <div id="deadlines" class="deadline-list"></div>
+    </section>
+
+    <!-- GROUPS -->
+    <section id="groups" class="screen hidden">
+      <div class="page-head"><div><h2>กลุ่มของฉัน</h2><p>จัดการกลุ่มและติดตามความคืบหน้า</p></div><button class="primary" onclick="openModal('groupModal')">+ สร้างกลุ่ม</button></div>
+      <div id="groupsGrid" class="group-grid"></div>
+    </section>
+
+    <!-- TASKS -->
+    <section id="tasks" class="screen hidden">
+      <div class="page-head"><div><h2>งานของฉัน</h2><p>รวมงานที่ได้รับมอบหมายและส่งงานแล้ว</p></div><button class="primary" onclick="openCreateTask()">+ เพิ่มงาน</button></div>
+      <div id="taskTable" class="task-table"></div>
+    </section>
+
+    <!-- BOARD -->
+    <section id="board" class="screen hidden">
+      <div class="board-head"><button class="back" onclick="navigate('dashboard')">‹</button><div><h2 id="boardTitle">Multimedia Project</h2><p id="boardSub"></p></div><button class="primary" onclick="openCreateTask()">+ เพิ่มงาน</button></div>
+      <div id="kanban" class="kanban"></div>
+    </section>
+
+    <!-- DETAIL -->
+    <section id="detail" class="screen hidden">
+      <button class="back-link" onclick="goBackFromDetail()">‹ รายละเอียดงาน</button>
+      <div id="detailContent"></div>
+    </section>
+
+    <!-- CREATE -->
+    <section id="create" class="screen hidden">
+      <button class="back-link" onclick="goBackFromCreate()">‹ สร้างงานใหม่</button>
+      <form id="createTaskForm" class="form-card">
+        <h2>สร้างงานใหม่</h2>
+        <label>ชื่องาน *</label><input id="taskName" required maxlength="100" placeholder="เช่น ทำ Presentation">
+        <label>รายละเอียด</label><textarea id="taskDesc" maxlength="500" placeholder="อธิบายรายละเอียดของงาน..."></textarea><div class="counter"><span id="counter">0</span>/500</div>
+        <label>ผู้รับผิดชอบ *</label><select id="assignee" required></select>
+        <label>Deadline *</label><input id="deadline" type="date" required>
+        <label>ไฟล์แนบ (เลือกได้หลายไฟล์)</label>
+        <input id="taskFiles" class="file-input" type="file" multiple>
+        <div id="selectedFiles" class="selected-files"></div>
+        <button class="primary wide" type="submit">มอบหมายงาน</button>
+      </form>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section id="notifications" class="screen hidden">
+      <div class="page-head"><div><h2>การแจ้งเตือน</h2><p>ความเคลื่อนไหวล่าสุดในกลุ่ม</p></div><button class="outline" onclick="markNotificationsRead()">ทำเครื่องหมายว่าอ่านแล้ว</button></div>
+      <div id="notificationList" class="notification-list"></div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile" class="screen hidden">
+      <div class="page-head"><div><h2>โปรไฟล์</h2><p>ข้อมูลบัญชีและโปรไฟล์ของคุณ</p></div></div>
+      <div class="profile-layout">
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileAvatar">👤</div>
+          <h2 id="profileName"></h2><p id="profileEmail"></p>
+          <button class="primary" onclick="openProfileEdit()">แก้ไขโปรไฟล์</button>
+        </div>
+        <div class="profile-card settings"><h3>บัญชีของฉัน</h3><div><b>ชื่อที่แสดง</b><span id="profileName2"></span></div><div><b>อีเมล</b><span id="profileEmail2"></span></div><div><b>จำนวนงาน</b><span id="profileTaskCount"></span></div></div>
+      </div>
+    </section>
+  </main>
+</section>
+
+<!-- MODALS -->
+<div id="modalOverlay" class="overlay hidden" onclick="closeModalOnOverlay(event)">
+  <div id="profileModal" class="modal hidden">
+    <div class="modal-head"><h3>แก้ไขโปรไฟล์</h3><button onclick="closeModal('profileModal')">×</button></div>
+    <form id="profileForm">
+      <label>ชื่อที่แสดง</label><input id="editName" maxlength="40" required>
+      <label>อีเมล</label><input id="editEmail" type="email" required>
+      <label>รูปโปรไฟล์</label><input id="avatarFile" type="file" accept="image/*">
+      <div class="modal-actions"><button type="button" class="outline" onclick="closeModal('profileModal')">ยกเลิก</button><button class="primary" type="submit">บันทึก</button></div>
+    </form>
+  </div>
+
+  <div id="groupModal" class="modal hidden">
+    <div class="modal-head"><h3>สร้างกลุ่มใหม่</h3><button onclick="closeModal('groupModal')">×</button></div>
+    <form id="groupForm"><label>ชื่อกลุ่ม</label><input id="groupName" required placeholder="เช่น Web Project"><label>รายละเอียด</label><textarea id="groupDesc" placeholder="รายละเอียดกลุ่ม"></textarea><div class="modal-actions"><button type="button" class="outline" onclick="closeModal('groupModal')">ยกเลิก</button><button class="primary">สร้างกลุ่ม</button></div></form>
+  </div>
+
+  <div id="resetModal" class="modal hidden">
+    <div class="modal-head"><h3>รีเซ็ตรหัสผ่าน</h3><button onclick="closeModal('resetModal')">×</button></div>
+    <p class="muted">สำหรับโปรเจกต์แบบใช้งานในเครื่อง ระบบจะเปลี่ยนรหัสผ่านให้หลังยืนยันอีเมล</p>
+    <form id="resetForm"><label>อีเมลบัญชี</label><input id="resetEmail" type="email" required><label>รหัสผ่านใหม่</label><input id="resetPassword" type="password" minlength="6" required><button class="primary wide">เปลี่ยนรหัสผ่าน</button></form>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>
